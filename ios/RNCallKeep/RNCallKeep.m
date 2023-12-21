@@ -53,6 +53,30 @@ static CXProvider* sharedProvider;
 // should initialise in AppDelegate.m
 RCT_EXPORT_MODULE()
 
+// * added by @ingyulee-genesislab
++ (BOOL)isCallKitSupported
+{
+#ifdef DEBUG
+    NSLog(@"[RNCallKeep-iglee][isCallKitSupported]");
+#endif
+    NSLocale *userLocale = [NSLocale currentLocale];
+    NSString *regionCode = [userLocale objectForKey:NSLocaleCountryCode];
+
+    if (!regionCode) {
+        return NO;
+    }
+
+    NSLog(@"[RNCallKeep-iglee][isCallKitSupported] regionCode %@", regionCode);
+
+    // * check if locale is China
+    if ([regionCode containsString:@"CN"] || [regionCode containsString:@"CHN"]) {
+        NSLog(@"[RNCallKeep-iglee][isCallKitSupported] return NO");
+        return NO;
+    }
+    return YES;
+}
+// * end of by @ingyulee-genesislab
+
 - (instancetype)init
 {
 #ifdef DEBUG
@@ -69,7 +93,6 @@ RCT_EXPORT_MODULE()
                                                    object:nil];
         // Init provider directly, in case of an app killed and when we've already stored our settings
         [RNCallKeep initCallKitProvider];
-
         self.callKeepProvider = sharedProvider;
         [self.callKeepProvider setDelegate:self queue:nil];
     }
@@ -180,6 +203,12 @@ RCT_EXPORT_MODULE()
 }
 
 + (void)initCallKitProvider {
+    // * added by @ingyulee-genesislab
+    if (![RNCallKeep isCallKitSupported]) {
+        return;
+    }
+    // * end of by @ingyulee-genesislab
+
     if (sharedProvider == nil) {
         NSDictionary *settings = [self getSettings];
         if (settings != nil) {
@@ -218,8 +247,8 @@ RCT_EXPORT_METHOD(setup:(NSDictionary *)options)
 
     [RNCallKeep initCallKitProvider];
 
-    self.callKeepProvider = sharedProvider;
-    [self.callKeepProvider setDelegate:self queue:nil];
+      self.callKeepProvider = sharedProvider;
+      [self.callKeepProvider setDelegate:self queue:nil];
 }
 
 RCT_EXPORT_METHOD(setSettings:(NSDictionary *)options)
