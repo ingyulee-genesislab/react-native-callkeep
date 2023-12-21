@@ -66,11 +66,9 @@ RCT_EXPORT_MODULE()
         return NO;
     }
 
-    NSLog(@"[RNCallKeep-iglee][isCallKitSupported] regionCode %@", regionCode);
-
     // * check if locale is China
     if ([regionCode containsString:@"CN"] || [regionCode containsString:@"CHN"]) {
-        NSLog(@"[RNCallKeep-iglee][isCallKitSupported] return NO");
+        NSLog(@"[RNCallKeep-iglee][isCallKitSupported] CallKit is not Allowed in China.");
         return NO;
     }
     return YES;
